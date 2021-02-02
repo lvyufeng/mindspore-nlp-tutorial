@@ -20,11 +20,10 @@
 
 
 
-<!-- #### 2. CNN(Convolutional Neural Network)
+#### 2. CNN(Convolutional Neural Network)
 
 - 2-1. [TextCNN](2-1.TextCNN) - **Binary Sentiment Classification**
   - Paper - [Convolutional Neural Networks for Sentence Classification(2014)](http://www.aclweb.org/anthology/D14-1181)
-  - [TextCNN.ipynb](https://colab.research.google.com/github/graykode/nlp-tutorial/blob/master/2-1.TextCNN/TextCNN.ipynb) -->
 
 
 
