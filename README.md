@@ -35,13 +35,13 @@
   - Paper - [LONG SHORT-TERM MEMORY(1997)](https://www.bioinf.jku.at/publications/older/2604.pdf)
 - 3-3. [Bi-LSTM](3-3.Bi-LSTM) - **Predict Next Word in Long Sentence**
 
-<!-- 
+
 #### 4. Attention Mechanism
 
 - 4-1. [Seq2Seq](4-1.Seq2Seq) - **Change Word**
   - Paper - [Learning Phrase Representations using RNN Encoder–Decoder
     for Statistical Machine Translation(2014)](https://arxiv.org/pdf/1406.1078.pdf)
-  - Colab - [Seq2Seq.ipynb](https://colab.research.google.com/github/graykode/nlp-tutorial/blob/master/4-1.Seq2Seq/Seq2Seq.ipynb)
+<!-- 
 - 4-2. [Seq2Seq with Attention](4-2.Seq2Seq(Attention)) - **Translate**
   - Paper - [Neural Machine Translation by Jointly Learning to Align and Translate(2014)](https://arxiv.org/abs/1409.0473)
   - Colab - [Seq2Seq(Attention).ipynb](https://colab.research.google.com/github/graykode/nlp-tutorial/blob/master/4-2.Seq2Seq(Attention)/Seq2Seq(Attention).ipynb)
