@@ -29,12 +29,10 @@
 
 #### 3. RNN(Recurrent Neural Network)
 
-<!-- - 3-1. [TextRNN](3-1.TextRNN) - **Predict Next Step**
+- 3-1. [TextRNN](3-1.TextRNN) - **Predict Next Step**
   - Paper - [Finding Structure in Time(1990)](http://psych.colorado.edu/~kimlab/Elman1990.pdf)
-  - Colab - [TextRNN.ipynb](https://colab.research.google.com/github/graykode/nlp-tutorial/blob/master/3-1.TextRNN/TextRNN.ipynb)
-- 3-2. [TextLSTM](https://github.com/graykode/nlp-tutorial/tree/master/3-2.TextLSTM) - **Autocomplete**
+- 3-2. [TextLSTM](3-2.TextLSTM) - **Autocomplete**
   - Paper - [LONG SHORT-TERM MEMORY(1997)](https://www.bioinf.jku.at/publications/older/2604.pdf)
-  - Colab - [TextLSTM.ipynb](https://colab.research.google.com/github/graykode/nlp-tutorial/blob/master/3-2.TextLSTM/TextLSTM.ipynb) -->
 - 3-3. [Bi-LSTM](3-3.Bi-LSTM) - **Predict Next Word in Long Sentence**
 
 <!-- 
