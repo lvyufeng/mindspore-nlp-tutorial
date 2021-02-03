@@ -4,6 +4,8 @@
 
 `mindspore-nlp-tutorial` is a tutorial for who is studying NLP(Natural Language Processing) using **MindSpore**. This repository is forked from [nlp-tutorial](https://github.com/graykode/nlp-tutorial). Most of the models in NLP were migrated from Pytorch version with less than **100 lines** of code.(except comments or blank lines)
 
+- **Notice**: All models are implemented in GPU version, but not test on Ascend platform.
+
 ## Curriculum - (Example Purpose)
 
 #### 1. Basic Embedding Model
@@ -35,13 +37,13 @@
   - Paper - [LONG SHORT-TERM MEMORY(1997)](https://www.bioinf.jku.at/publications/older/2604.pdf)
 - 3-3. [Bi-LSTM](3-3.Bi-LSTM) - **Predict Next Word in Long Sentence**
 
-<!-- 
+
 #### 4. Attention Mechanism
 
 - 4-1. [Seq2Seq](4-1.Seq2Seq) - **Change Word**
   - Paper - [Learning Phrase Representations using RNN Encoder–Decoder
     for Statistical Machine Translation(2014)](https://arxiv.org/pdf/1406.1078.pdf)
-  - Colab - [Seq2Seq.ipynb](https://colab.research.google.com/github/graykode/nlp-tutorial/blob/master/4-1.Seq2Seq/Seq2Seq.ipynb)
+<!-- 
 - 4-2. [Seq2Seq with Attention](4-2.Seq2Seq(Attention)) - **Translate**
   - Paper - [Neural Machine Translation by Jointly Learning to Align and Translate(2014)](https://arxiv.org/abs/1409.0473)
   - Colab - [Seq2Seq(Attention).ipynb](https://colab.research.google.com/github/graykode/nlp-tutorial/blob/master/4-2.Seq2Seq(Attention)/Seq2Seq(Attention).ipynb)
@@ -64,8 +66,8 @@
 ## Dependencies
 
 - Python 3.7.5
-- MindSpore 1.1.1
-
+- MindSpore 1.1.1(GPU version)
+- Pytorch 1.7.1(for comparation)
 
 ## Author
 
