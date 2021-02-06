@@ -4,6 +4,8 @@
 
 `mindspore-nlp-tutorial` is a tutorial for who is studying NLP(Natural Language Processing) using **MindSpore**. This repository is forked from [nlp-tutorial](https://github.com/graykode/nlp-tutorial). Most of the models in NLP were migrated from Pytorch version with less than **100 lines** of code.(except comments or blank lines)
 
+- **Notice**: All models are implemented in GPU version, but not test on Ascend platform.
+
 ## Curriculum - (Example Purpose)
 
 #### 1. Basic Embedding Model
@@ -57,15 +59,15 @@
   <!-- - Colab - [Transformer.ipynb](https://colab.research.google.com/github/graykode/nlp-tutorial/blob/master/5-1.Transformer/Transformer.ipynb), [Transformer(Greedy_decoder).ipynb](https://colab.research.google.com/github/graykode/nlp-tutorial/blob/master/5-1.Transformer/Transformer(Greedy_decoder).ipynb) -->
 <!-- - 5-2. [BERT](5-2.BERT) - **Classification Next Sentence & Predict Masked Tokens**
   - Paper - [BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding(2018)](https://arxiv.org/abs/1810.04805)
-  - Colab - [BERT.ipynb](https://colab.research.google.com/github/graykode/nlp-tutorial/blob/master/5-2.BERT/BERT.ipynb) --> -->
+  - Colab - [BERT.ipynb](https://colab.research.google.com/github/graykode/nlp-tutorial/blob/master/5-2.BERT/BERT.ipynb) -->
 
 
 
 ## Dependencies
 
 - Python 3.7.5
-- MindSpore 1.1.1
-
+- MindSpore 1.1.1(GPU version)
+- Pytorch 1.7.1(for comparation)
 
 ## Author
 
