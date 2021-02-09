@@ -65,7 +65,7 @@ class RNN(nn.Cell):
         
         self.batch_first = batch_first
         self.transpose = P.Transpose()
-        self.pack = P.Pack()
+        self.stack = P.Stack()
         self.dropout = nn.Dropout(1 - dropout)
     def construct(self, input: Tensor, h_0: Tensor):
         if self.batch_first:
@@ -77,7 +77,7 @@ class RNN(nn.Cell):
         for t in range(time_steps):
             h_t = self.rnn_cell(input[t], h_t)
             output.append(h_t)
-        output = self.pack(output)
+        output = self.stack(output)
         h_t = self.dropout(h_t)
         output = self.dropout(output)
         return output, h_t

@@ -10,11 +10,12 @@ class Conv1d(nn.Conv1d):
         self.reset_parameters()
         
     def reset_parameters(self):
-        self.weight = Parameter(initializer(HeUniform(math.sqrt(5)), self.weight.shape), name='weight')
+        self.weight.set_data(initializer(HeUniform(math.sqrt(5)), self.weight.shape))
+        #self.weight = Parameter(initializer(HeUniform(math.sqrt(5)), self.weight.shape), name='weight')
         if self.has_bias:
             fan_in, _ = _calculate_fan_in_and_fan_out(self.weight.shape)
             bound = 1 / math.sqrt(fan_in)
-            self.bias = Parameter(initializer(Uniform(bound), [self.out_channels]), name='bias')
+            self.bias.set_data(initializer(Uniform(bound), [self.out_channels]))
 
 class Dense(nn.Dense):
     def __init__(self, in_channels, out_channels, has_bias=True, activation=None):
@@ -22,11 +23,11 @@ class Dense(nn.Dense):
         self.reset_parameters()
         
     def reset_parameters(self):
-        self.weight = Parameter(initializer(HeUniform(math.sqrt(5)), self.weight.shape), name='weight')
+        self.weight.set_data(initializer(HeUniform(math.sqrt(5)), self.weight.shape))
         if self.has_bias:
             fan_in, _ = _calculate_fan_in_and_fan_out(self.weight.shape)
             bound = 1 / math.sqrt(fan_in)
-            self.bias = Parameter(initializer(Uniform(bound), [self.out_channels]), name='bias')
+            self.bias.set_data(initializer(Uniform(bound), [self.out_channels]))
 
 class Embedding(nn.Embedding):
     def __init__(self, vocab_size, embedding_size, use_one_hot=False, embedding_table='normal', dtype=mindspore.float32, padding_idx=None):
