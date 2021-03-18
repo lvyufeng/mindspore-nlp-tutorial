@@ -7,8 +7,10 @@ from mindspore import Tensor, Parameter, ParameterTuple
 from mindspore.common.initializer import initializer, Uniform
 from mindspore import log as logger
 from mindspore import ms_function
+from mindspore import context
 from rnn_cells import rnn_relu_cell, rnn_tanh_cell, lstm_cell, gru_cell
 from mindspore.ops.primitive import constexpr
+from utils import Reverse, ReverseSequence
 
 @constexpr
 def _init_state(shape, dtype, is_lstm):
@@ -55,8 +57,9 @@ class DynamicRNN(nn.Cell):
         else:
             hidden_size = h.shape[-1]
             zero_output = P.ZerosLike()(h_t)
-        
+        seq_length = P.Cast()(seq_length, mindspore.float32)
         seq_length = P.BroadcastTo((hidden_size, -1))(seq_length)
+        seq_length = P.Cast()(seq_length, mindspore.int32)
         seq_length = P.Transpose()(seq_length, (1, 0))
         
         outputs = []
@@ -106,6 +109,13 @@ class RNNBase(nn.Cell):
         else:
             raise ValueError("Unrecognized RNN mode: " + mode)
         
+        self.is_ascend = context.get_context("device_target") == "Ascend"
+        if self.is_ascend:
+            self.reverse = P.ReverseV2([0])
+            self.reverse_sequence = P.ReverseSequence(0, 1)
+        else:
+            self.reverse = Reverse(0)
+            self.reverse_sequence = ReverseSequence(0, 1)
         self.hidden_size = hidden_size        
         self.batch_first = batch_first
         self.num_layers = num_layers
@@ -160,15 +170,15 @@ class RNNBase(nn.Cell):
                 h_f_i = h[offset]
                 h_b_i = h[offset + 1]
             if seq_length is None:
-                x_b = P.ReverseV2([0])(pre_layer)
+                x_b = self.reverse(pre_layer)
             else:
-                x_b = P.ReverseSequence(0, 1)(pre_layer, seq_length)
+                x_b = self.reverse_sequence(pre_layer, seq_length)
             output_f, h_t_f = self.rnn(pre_layer, h_f_i, seq_length, w_f_ih, w_f_hh, b_f_ih, b_f_hh)
             output_b, h_t_b = self.rnn(x_b, h_b_i, seq_length, w_b_ih, w_b_hh, b_b_ih, b_b_hh)
             if seq_length is None:
-                output_b = P.ReverseV2([0])(output_b)
+                output_b = self.reverse(output_b)
             else:
-                output_b = P.ReverseSequence(0, 1)(output_b, seq_length)
+                output_b = self.reverse_sequence(output_b, seq_length)
             output = P.Concat(2)((output_f, output_b))
             pre_layer = self.dropout_op(output) if (self.dropout != 0 and i < self.num_layers - 1) else output
             if self.is_lstm:
