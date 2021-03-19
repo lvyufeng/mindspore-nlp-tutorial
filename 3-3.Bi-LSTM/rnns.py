@@ -15,8 +15,9 @@ from utils import Reverse, ReverseSequence
 @constexpr
 def _init_state(shape, dtype, is_lstm):
     hx = Tensor(np.zeros(shape), dtype)
+    cx = Tensor(np.zeros(shape), dtype)
     if is_lstm:
-        return (hx, hx)
+        return (hx, cx)
     else:
         return hx
 
@@ -36,20 +37,23 @@ class DynamicRNN(nn.Cell):
         self.cell = cell
         self.is_lstm = mode == "LSTM"
         
-    def recurrent(self, x, h, w_ih, w_hh, b_ih, b_hh):
-        time_step = range(x.shape[0])
+    def recurrent(self, x, h_0, w_ih, w_hh, b_ih, b_hh):
+        time_step = x.shape[0]
         outputs = []
-        for t in time_step:
+        t = 0
+        h = h_0
+        while t < time_step:
             h = self.cell(x[t], h, w_ih, w_hh, b_ih, b_hh)
             if self.is_lstm:
                 outputs.append(h[0])
             else:
                 outputs.append(h)
+            t += 1
         outputs = P.Stack()(outputs)
         return outputs, h    
     
     def variable_recurrent(self, x, h, seq_length, w_ih, w_hh, b_ih, b_hh):
-        time_step = range(x.shape[0])
+        time_step = x.shape[0]
         h_t = h
         if self.is_lstm:
             hidden_size = h[0].shape[-1]
@@ -64,7 +68,8 @@ class DynamicRNN(nn.Cell):
         
         outputs = []
         state_t = h_t
-        for t in time_step:
+        t = 0
+        while t < time_step:
             h_t = self.cell(x[t], state_t, w_ih, w_hh, b_ih, b_hh)
             seq_cond = seq_length > t
             if self.is_lstm:
@@ -76,6 +81,7 @@ class DynamicRNN(nn.Cell):
                 state_t = P.Select()(seq_cond, h_t, state_t)
                 output = P.Select()(seq_cond, h_t, zero_output)
             outputs.append(output)
+            t += 1
         outputs = P.Stack()(outputs)
         return outputs, state_t
     
@@ -127,28 +133,27 @@ class RNNBase(nn.Cell):
         num_directions = 2 if bidirectional else 1
         self.is_lstm = mode == "LSTM"
         
-        self._all_weights = []
+        self.w_ih_list = []
+        self.w_hh_list = []
+        self.b_ih_list = []
+        self.b_hh_list = []
+        stdv = 1 / math.sqrt(self.hidden_size)
         for layer in range(num_layers):
             for direction in range(num_directions):
                 layer_input_size = input_size if layer == 0 else hidden_size * num_directions
                 suffix = '_reverse' if direction == 1 else ''
-                w_ih = Parameter(Tensor(np.random.randn(gate_size, layer_input_size).astype(np.float32)), name='weight_ih_l{}{}'.format(layer, suffix))
-                w_hh = Parameter(Tensor(np.random.randn(gate_size, hidden_size).astype(np.float32)), name='weight_hh_l{}{}'.format(layer, suffix))
+                
+                self.w_ih_list.append(Parameter(Tensor(np.random.uniform(-stdv, stdv, (gate_size, layer_input_size)).astype(np.float32)), name='weight_ih_l{}{}'.format(layer, suffix)))
+                self.w_hh_list.append(Parameter(Tensor(np.random.uniform(-stdv, stdv, (gate_size, hidden_size)).astype(np.float32)), name='weight_hh_l{}{}'.format(layer, suffix)))
                 if has_bias:
-                    b_ih = Parameter(Tensor(np.random.randn(gate_size).astype(np.float32)), name='bias_ih_l{}{}'.format(layer, suffix))
-                    b_hh = Parameter(Tensor(np.random.randn(gate_size).astype(np.float32)), name='bias_hh_l{}{}'.format(layer, suffix))
-                    layer_params = (w_ih, w_hh, b_ih, b_hh)
-                else:
-                    layer_params = (w_ih, w_hh)
-                self._all_weights.append(ParameterTuple(layer_params))  
-        self.reset_parameters()
-        
-    def reset_parameters(self):
-        stdv = 1 / math.sqrt(self.hidden_size)
-        for weight in self.get_parameters():
-            weight.set_data(initializer(Uniform(stdv), weight.shape))
-    
-    def _stacked_bi_dynamic_rnn(self, x, h, seq_length, weights):
+                    self.b_ih_list.append(Parameter(Tensor(np.random.uniform(-stdv, stdv, (gate_size)).astype(np.float32)), name='bias_ih_l{}{}'.format(layer, suffix)))
+                    self.b_hh_list.append(Parameter(Tensor(np.random.uniform(-stdv, stdv, (gate_size)).astype(np.float32)), name='bias_hh_l{}{}'.format(layer, suffix)))
+        self.w_ih_list = ParameterTuple(self.w_ih_list)
+        self.w_hh_list = ParameterTuple(self.w_hh_list)
+        self.b_ih_list = ParameterTuple(self.b_ih_list)
+        self.b_hh_list = ParameterTuple(self.b_hh_list) 
+                    
+    def _stacked_bi_dynamic_rnn(self, x, h, seq_length):
         """stacked bidirectional dynamic_rnn"""
         pre_layer = x
         h_n = ()
@@ -157,11 +162,11 @@ class RNNBase(nn.Cell):
         for i in range(self.num_layers):
             offset = i * 2
             if self.has_bias:
-                w_f_ih, w_f_hh, b_f_ih, b_f_hh = weights[offset]
-                w_b_ih, w_b_hh, b_b_ih, b_b_hh = weights[offset + 1]
+                w_f_ih, w_f_hh, b_f_ih, b_f_hh = self.w_ih_list[offset], self.w_hh_list[offset], self.b_ih_list[offset], self.b_hh_list[offset]
+                w_b_ih, w_b_hh, b_b_ih, b_b_hh = self.w_ih_list[offset + 1], self.w_hh_list[offset + 1], self.b_ih_list[offset + 1], self.b_hh_list[offset + 1]
             else:
-                w_f_ih, w_f_hh = weights[offset]
-                w_b_ih, w_b_hh = weights[offset + 1]
+                w_f_ih, w_f_hh = self.w_ih_list[offset], self.w_hh_list[offset]
+                w_b_ih, w_b_hh = self.w_ih_list[offset + 1], self.w_hh_list[offset + 1]
                 b_f_ih, b_f_hh, b_b_ih, b_b_hh = None, None, None, None
             if self.is_lstm:
                 h_f_i = (h[0][offset], h[1][offset])
@@ -197,7 +202,7 @@ class RNNBase(nn.Cell):
             return output, h_n.view(h.shape)
         return x, h
     
-    def _stacked_dynamic_rnn(self, x, h, seq_length, weights):
+    def _stacked_dynamic_rnn(self, x, h, seq_length):
         """stacked mutil_layer dynamic_rnn"""
         pre_layer = x
         h_n = ()
@@ -205,9 +210,9 @@ class RNNBase(nn.Cell):
         output = 0
         for i in range(self.num_layers):
             if self.has_bias:
-                w_ih, w_hh, b_ih, b_hh = weights[i]
+                w_ih, w_hh, b_ih, b_hh = self.w_ih_list[i], self.w_hh_list[i], self.b_ih_list[i], self.b_hh_list[i]
             else:
-                w_ih, w_hh = weights[i]
+                w_ih, w_hh = self.w_ih_list[i], self.w_hh_list[i]
                 b_ih, b_hh = None, None
             if self.is_lstm:
                 h_i = (h[0][i], h[1][i])
@@ -238,9 +243,9 @@ class RNNBase(nn.Cell):
         if self.batch_first:
             x = P.Transpose()(x, (1, 0, 2))
         if self.bidirectional:
-            x, h = self._stacked_bi_dynamic_rnn(x, h, seq_length, self._all_weights)
+            x, h = self._stacked_bi_dynamic_rnn(x, h, seq_length)
         else:
-            x, h = self._stacked_dynamic_rnn(x, h, seq_length, self._all_weights)
+            x, h = self._stacked_dynamic_rnn(x, h, seq_length)
         if self.batch_first:
             x = P.Transpose()(x, (1, 0, 2))
         return x, h

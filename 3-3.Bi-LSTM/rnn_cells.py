@@ -6,6 +6,7 @@ import mindspore.ops as P
 from mindspore import Tensor, Parameter
 from mindspore.common.initializer import initializer, Uniform
 from typing import Tuple
+from mindspore import ms_function
 
 def rnn_tanh_cell(input, hidden, w_ih, w_hh, b_ih, b_hh):
     if b_ih is None:
