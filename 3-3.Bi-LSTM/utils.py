@@ -4,6 +4,12 @@ import mindspore.nn as nn
 import mindspore.ops as ops
 import mindspore.numpy as np
 
+@constexpr
+def gen_reversed_indexes(dim_size):
+    reversed_indexes = mindspore.Tensor(np.arange(dim_size-1, -1, -1), mindspore.int32)
+
+    return reversed_indexes
+
 class Reverse(nn.Cell):
     """Reverse operator, like Reverse in mindspore"""
     def __init__(self, dim):
@@ -13,7 +19,7 @@ class Reverse(nn.Cell):
     def construct(self, input_x):
         shape = input_x.shape
         dim_size = shape[self.dim]
-        reversed_indexes = np.arange(dim_size-1, -1, -1)
+        reversed_indexes = gen_reversed_indexes(dim_size)
         output = ops.Gather()(input_x, reversed_indexes, self.dim)
         return output
 
