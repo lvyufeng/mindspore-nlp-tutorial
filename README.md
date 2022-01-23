@@ -4,7 +4,7 @@
 
 `mindspore-nlp-tutorial` is a tutorial for who is studying NLP(Natural Language Processing) using **MindSpore**. This repository is migrated from [nlp-tutorial](https://github.com/graykode/nlp-tutorial). Most of the models in NLP were migrated from Pytorch version with less than **100 lines** of code.(except comments or blank lines)
 
-- **Notice**: All models are implemented in GPU version, but not test on Ascend platform.
+- **Notice**: All models are tested on CPU(Linux and macOS), GPU and Ascend.
 
 ## Curriculum - (Example Purpose)
 
@@ -65,7 +65,7 @@
 ## Dependencies
 
 - Python 3.7.5
-- MindSpore 1.1.1(GPU version)
+- MindSpore 1.6.0
 - Pytorch 1.7.1(for comparation)
 
 ## Author
