@@ -50,17 +50,14 @@
 
 - 5-1.  [The Transformer](5-1.Transformer) - **Translate**
   - Paper - [Attention Is All You Need(2017)](https://arxiv.org/abs/1706.03762)
-  <!-- - Colab - [Transformer.ipynb](https://colab.research.google.com/github/graykode/nlp-tutorial/blob/master/5-1.Transformer/Transformer.ipynb), [Transformer(Greedy_decoder).ipynb](https://colab.research.google.com/github/graykode/nlp-tutorial/blob/master/5-1.Transformer/Transformer(Greedy_decoder).ipynb) -->
-<!-- - 5-2. [BERT](5-2.BERT) - **Classification Next Sentence & Predict Masked Tokens**
+
+- 5-2. [BERT](5-2.BERT) - **Classification Next Sentence & Predict Masked Tokens**
   - Paper - [BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding(2018)](https://arxiv.org/abs/1810.04805)
-  - Colab - [BERT.ipynb](https://colab.research.google.com/github/graykode/nlp-tutorial/blob/master/5-2.BERT/BERT.ipynb) -->
-
-
 
 ## Dependencies
 
 - Python 3.7.5
-- MindSpore 1.6.0
+- MindSpore 1.6.1
 - Pytorch 1.7.1(for comparation)
 
 ## Author
