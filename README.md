@@ -1,6 +1,6 @@
 # mindspore-nlp-tutorial
 
-<p align="center"><img width="400" src="https://gitee.com/mindspore/mindspore/raw/master/docs/MindSpore-logo.png" /></p>
+<p align="center"><img width="400" src="https://raw.githubusercontent.com/mindspore-ai/mindspore/master/docs/MindSpore-logo.png" /></p>
 
 `mindspore-nlp-tutorial` is a tutorial for who is studying NLP(Natural Language Processing) using **MindSpore**. This repository is migrated from [nlp-tutorial](https://github.com/graykode/nlp-tutorial). Most of the models in NLP were migrated from Pytorch version with less than **100 lines** of code.(except comments or blank lines)
 
