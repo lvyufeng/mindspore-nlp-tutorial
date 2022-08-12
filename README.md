@@ -56,8 +56,8 @@
 
 ## Dependencies
 
-- Python 3.7.5
-- MindSpore 1.6.1
+- Python >= 3.7.5
+- MindSpore 1.8.1
 - Pytorch 1.7.1(for comparation)
 
 ## Author
